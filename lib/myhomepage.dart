@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -19,7 +20,19 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith("tel:")) {
+              launchUrl(Uri.parse(request.url));
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
       ..loadRequest(Uri.parse('https://mrwireless.shop'));
+
     //Or
    // _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
    // _controller.loadRequest(Uri.parse('https://mrwireless.shop'));
